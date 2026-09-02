@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+
+# Environment & IDE
+.DS_Store
+*.vsix
+.agents/
+
+# 3D Printing large binaries & sliced gcode
+*.gcode
+*.zip
+*.blend1
+*.3mf
