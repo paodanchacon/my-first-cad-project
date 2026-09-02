@@ -47,7 +47,7 @@ Your model will instantly render in the viewer pane!
 
 ## 4. Understanding Your First CAD Design
 
-The script (`hello_build123d.py`) uses the **Builder Mode** paradigm. It leverages Python context managers (`with`) to keep track of active parts and sketches. 
+The script (`tutorials/hello_build123d.py`) uses the **Builder Mode** paradigm. It leverages Python context managers (`with`) to keep track of active parts and sketches. 
 
 Here is a breakdown of what the code does:
 
@@ -77,22 +77,54 @@ with BuildPart() as my_part:
 show(my_part)
 ```
 
-## 5. Part 1 Breakdown (part1.py)
+## 5. Part 1 Breakdown (`tutorials/part1.py`)
 
 For a deeper dive into a more complex design, including sketches, extrusions, fillets, and holes, check out the [tutorials/part1_explanation.md](tutorials/part1_explanation.md) guide.
 
 It provides a step-by-step code breakdown and analysis of `tutorials/part1.py` (a U-shaped bracket) and includes suggested modifications to help you understand the parametric design workflow better!
 
-## 6. Part 2 Breakdown (part2.py)
+## 6. Part 2 Breakdown (`tutorials/part2.py`)
 
 For an example of 2D sketching with subtractive elements (a hexagon with a hole) and advanced topological edge selection for filleting, check out the [tutorials/part2_explanation.md](tutorials/part2_explanation.md) guide!
 
 ## 7. Project Structure
 
-The project is organized into functional categories:
+The repository is modularly organized into functional categories, each with its own documentation guide:
 
-* **`tutorials/`**: Guided 3D parts with detailed markdown walkthroughs (`hello_build123d.py`, `flange_tutorial.py`, `part1.py`, `part2.py`).
-* **`constraints/`**: 2D geometric constraint studies (`triangle_constraints.py`, `trapezoid_constraints.py`, `fillet_polyline.py`, `offset_constraint.py`, `blendcurve_constraint.py`, `tangency_constraint.py`).
-* **`assemblies/`**: Multi-part kinematic and rigid joint assemblies (`joint_assembly.py`).
+```text
+my_first_cad_project/
+├── main.py                         # Interactive CLI runner and directory index
+├── pyproject.toml                  # Project metadata and dependencies
+├── uv.lock                         # Pinned dependency lockfile
+├── README.md                       # Main project setup and overview
+│
+├── tutorials/                      # Guided 3D parts & walkthroughs
+│   ├── README.md                   # Detailed guide for all tutorials
+│   ├── hello_build123d.py          # Basic solid body with subtractive cut
+│   ├── flange_tutorial.py          # Parametric mounting flange with hole grid
+│   ├── part1.py                    # Symmetric U-bracket model
+│   ├── part1_explanation.md        # Mathematical & code breakdown of part 1
+│   ├── part2.py                    # Hexagonal socket recess model
+│   └── part2_explanation.md        # Topological selection breakdown of part 2
+│
+├── constraints/                    # 2D geometric constraints & line studies
+│   ├── README.md                   # Comprehensive guide to constraint solvers
+│   ├── triangle_constraints.py     # SSS, SAS, ASA, and right-angled solvers
+│   ├── trapezoid_constraints.py    # Angle-constrained 4-sided trapezoids
+│   ├── fillet_polyline.py          # 2D/3D polylines with variable corner fillets
+│   ├── offset_constraint.py        # Wall offsets (Kind.ARC, INTERSECTION, TANGENT)
+│   ├── blendcurve_constraint.py    # C1/C2 curvature continuity blending
+│   └── tangency_constraint.py      # Apollonius circle tangency problem solver
+│
+└── assemblies/                     # Multi-body assemblies & joint connections
+    ├── README.md                   # Guide to joint systems and mating
+    └── joint_assembly.py           # RigidJoint mating of base and pin components
+```
 
-Run `uv run main.py` at any time to list all runnable scripts.
+### Subfolder Documentation Guides
+* 📖 [**`tutorials/README.md`**](tutorials/README.md) — Walkthroughs for modeling individual parts.
+* 📐 [**`constraints/README.md`**](constraints/README.md) — In-depth reference for 2D constraint geometry and curves.
+* 🔩 [**`assemblies/README.md`**](assemblies/README.md) — Reference for defining joints and mating parts.
+
+Run `uv run main.py` in your terminal at any time to list all runnable scripts and execution commands.
+
