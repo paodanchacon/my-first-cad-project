@@ -185,21 +185,21 @@ If the gussets create overhang angles greater than 45°, use tree supports set t
 
 ## Build123d Rebuild Roadmap
 
-Step-by-step guided exercises (no spoilers — I'll guide you to write each step):
+Step-by-step implementation progress:
 
-| Step | What you'll build | Key build123d concepts |
-|---|---|---|
-| 1 | Project setup & imports | `BuildPart`, coordinate system |
-| 2 | Wall plate profile sketch | `BuildSketch`, `Rectangle`, `RectangleRounded` |
-| 3 | Extrude wall plate to 10mm slab | `extrude()` |
-| 4 | Arm block on front face | `BuildSketch` on face, `Box`, `mode=Mode.ADD` |
-| 5 | Fork prongs with rounded tops | `SlotOverall`, `mirror()` |
-| 6 | Hinge pin holes | `Hole()`, `Cylinder` with `Mode.SUBTRACT` |
-| 7 | Triangular gussets ⭐ | `Polyline` sketch + `extrude()` on perpendicular plane |
-| 8 | Fillets on all junctions | `fillet()` on selected edges |
-| 9 | Mounting holes (4× M4) | `GridLocations`, `Hole()` or `CounterBoreHole` |
-| 10 | Optional stiffening ribs | Thin `Box` additions on back face |
-| 11 | Export & verify | `export_stl()`, `show()` |
+| Step | What you'll build | Status | Key build123d concepts used |
+|---|---|---|---|
+| 1 | Project setup & imports | ✅ Complete | `BuildPart`, coordinate system, `ocp_vscode` |
+| 2 | Wall plate (70×70×10mm) | ✅ Complete | `BuildSketch`, `Rectangle(70, 70)`, `extrude(10)` |
+| 3 | Fork arm blocks (Y=±28) | ✅ Complete | `BuildSketch` on face, `Rectangle(70, 14)`, `extrude(45)` |
+| 4 | Prong tips rounded (cylinder cap) | ✅ Complete | `Cylinder(r=35, h=14, rotation=(90,0,0))` |
+| 5 | Hinge pin holes & outer counterbores | ✅ Complete | `Cylinder(r=3, h=20)` through-bore + `Cylinder(r=5, h=3)` M10 outer counterbore |
+| 6 | Triangular gussets on outer X-faces | ✅ Complete | `Plane.YZ.offset(±35)`, `Polyline`, `extrude(±6)` |
+| 7 | Fillets (outer corners & junction) | ✅ Complete | `SortBy.LENGTH` for 4 outer corners (R=4mm), junction fillet (R=3mm) |
+| 8 | Wall mounting slots & screw recesses | ✅ Complete | Dual `Ellipse(r_x=2.5, r_y=12)` through-slots + `Plane.XY.offset(8)` 2mm front recesses |
+| 9 | Optional stiffening ribs | ⚪ Skipped | Evaluated: 10mm solid wall plate provides ample rigidity |
+| 10 | Export STL & mesh verification | ⏳ Next | `export_stl()`, mesh inspection |
+| 11 | Slicing & print on Ender 3 Pro | ⬜ Pending | Cura settings, tree supports, layer orientation |
 
 ---
 

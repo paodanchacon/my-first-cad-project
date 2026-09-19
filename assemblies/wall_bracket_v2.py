@@ -21,14 +21,7 @@ with BuildPart() as wall_bracket:
         Rectangle(70, 70)
     extrude(amount=10)
 
-    # ── Step 2: Wall mounting holes ───────────────────────────────────────────
-    # 4× M5 holes (radius 2.5mm) through the wall plate for wall anchors.
-    # Placed at X=±17mm, centered on the plate (Y=0), through the plate (Z=5).
-    # Height=12mm ensures the subtraction goes fully through the 10mm plate.
-    with Locations([Pos(-17, 0, 5), Pos(17, 0, 5)]):
-        Cylinder(radius=2.5, height=12, mode=Mode.SUBTRACT)
-
-    # ── Step 3: Fork arm blocks (base sketch) ────────────────────────────────
+    # ── Step 2: Fork arm blocks (base sketch) ────────────────────────────────
     # Sketch two 70×14mm rectangles on the TOP face of the wall plate (Z=10).
     # Positioned at Y=±28mm → creates the two fork prongs symmetrically.
     # 70mm wide (same as plate) so the slicer lays continuous wall lines top-to-bottom.
@@ -36,7 +29,7 @@ with BuildPart() as wall_bracket:
         with Locations([Pos(0, -28), Pos(0, 28)]):
             Rectangle(70, 14)
 
-    # ── Step 4: Rounded prong tips (cylinder cap) ────────────────────────────
+    # ── Step 3: Rounded prong tips (cylinder cap) ────────────────────────────
     # A large-radius cylinder (r=35mm) rotated 90° around X becomes a "dome"
     # that rounds the top of each prong when unioned with the arm extrusion.
     # Centers at Y=±28, Z=55 (top of the 45mm arm extrusion).
@@ -46,14 +39,18 @@ with BuildPart() as wall_bracket:
     # Extrude the arm block sketch + cylinder cap upward 45mm (Z=10 → Z=55).
     extrude(amount=45)
 
-    # ── Step 5: Hinge pin holes ───────────────────────────────────────────────
-    # Two M6 bore holes (radius 3mm) through the fork prongs for the hinge pin.
-    # Centered at Y=±28, Z=65 (inside the rounded prong cap), axis along Y.
-    # height=20mm ensures the hole goes fully through the 14mm-wide prong.
+    # ── Step 4: Hinge pin holes & outer counterbores ──────────────────────────
+    # 1) Outer counterbores: M10 head/nut recess (radius 5mm), 1.5mm deep into
+    #    the outer faces (Y=±35, Z=65). Height=3 centered on Y=±35 cuts 1.5mm in.
+    with Locations([Pos(0, 35, 65), Pos(0, -35, 65)]):
+        Cylinder(radius=5, height=3, rotation=(90, 0, 0), mode=Mode.SUBTRACT)
+
+    # 2) Hinge bore holes: M6 clearance (radius 3mm) through both prongs.
+    #    Centered at Y=±28, Z=65. Height=20mm ensures full cut through 14mm prongs.
     with Locations([Pos(0, 28, 65), Pos(0, -28, 65)]):
         Cylinder(radius=3, height=20, rotation=(90, 0, 0), mode=Mode.SUBTRACT)
 
-    # ── Step 6: Triangular gussets — RIGHT outer face (X=+35) ────────────────
+    # ── Step 5: Triangular gussets — RIGHT outer face (X=+35) ────────────────
     # Gussets convert bending stress into shear/compression (much stronger in FDM).
     # Sketch plane: Plane.YZ.offset(35) = vertical face at X=35.
     #   local_x = Y_world, local_y = Z_world
@@ -64,19 +61,42 @@ with BuildPart() as wall_bracket:
     # extrude(amount=-6) → grows 6mm INWARD (toward X=0), into the bracket body.
     with BuildSketch(Plane.YZ.offset(35)) as gussets:
         with BuildLine():
-            Polyline((21, 10), (21, 45), (-29, 10), close=True)
+            Polyline((21, 10), (21, 45), (-32, 10), close=True)
         make_face()
     extrude(amount=-6)
 
-    # ── Step 7: Triangular gussets — LEFT outer face (X=−35) ─────────────────
+    # ── Step 6: Triangular gussets — LEFT outer face (X=−35) ─────────────────
     # Mirror gusset on the opposite outer face for symmetric reinforcement.
     # Plane.YZ.offset(-35) = vertical face at X=-35, same local axis orientation.
     # Same triangle shape; extrude(amount=+6) grows INWARD (toward X=0).
     with BuildSketch(Plane.YZ.offset(-35)) as gussets2:
         with BuildLine():
-            Polyline((21, 10), (21, 45), (-29, 10), close=True)
+            Polyline((21, 10), (21, 45), (-32, 10), close=True)
         make_face()
     extrude(amount=6)
+    
+    # ── Step 7: Fillets ───────────────────────────────────────────────────────
+    # 1) Outer corner fillet: 4 vertical corners (Z=0 to Z=55) softened with R=4mm.
+    corner_edges = wall_bracket.edges().filter_by(Axis.Z).sort_by(SortBy.LENGTH)[-4:]
+    fillet(corner_edges, radius=4)
+
+    # 2) Structural junction fillet: R=3mm where arm blocks meet plate (Z=10).
+    fillet(wall_bracket.edges().filter_by_position(axis=Axis.Z, minimum=9.9, maximum=10.1), radius=3)
+
+    # ── Step 8: Wall mounting slots & screw head recesses ─────────────────────
+    # Dual slotted ellipses at X=±16mm along Y for alignment play during mounting.
+    # 1) Screw head recess: wider ellipse, 2mm deep cut from front face (Z=10 down to Z=8)
+    with BuildSketch(Plane.XY.offset(8)) as head_recess:
+        with Locations([Pos(-16, 0), Pos(16, 0)]):
+            Ellipse(x_radius=4, y_radius=14)
+    extrude(amount=3, mode=Mode.SUBTRACT)
+
+    # 2) Through-slot: M5 clearance (radius 2.5mm) through the remaining 8mm plate
+    with BuildSketch(Plane.XY) as mounting_holes:
+        with Locations([Pos(-16, 0), Pos(16, 0)]):
+            Ellipse(x_radius=2.5, y_radius=12)
+    extrude(amount=12, mode=Mode.SUBTRACT)
+   
 
 result = wall_bracket.part
 show(result)
